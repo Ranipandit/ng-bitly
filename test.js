@@ -2,9 +2,9 @@ const expect = require('chai').expect
 const axios = require('axios')
 
 describe("API Tests", function() {
-
+  let id, hash;
   describe("/shorten", function() {
-    let id, hash
+    
     it("should return a shortened URL", (done) => {
         const request = { url: "https://google.com" }
         axios.post('http://localhost:3000/shorten', request)
@@ -28,4 +28,16 @@ describe("API Tests", function() {
         })
     });
   });
+
+  describe("/:hash", function() {
+
+    it("should redirect the user for an existing hash", (done) => {
+      axios.get("http://localhost:3000/"+hash)
+      .then(response => {
+        expect(response.data).to.contain("google.com")
+        done()
+      })
+    })
+  })
+
 });

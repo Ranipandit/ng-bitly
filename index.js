@@ -43,4 +43,16 @@ app.post('/shorten', (req, res) => {
     })
 })
 
+app.get('/:hash', (req, res) => {
+    URL.findOne({hash: req.params.hash}).exec()
+    .then(existingUrl => {
+        if (existingUrl) {
+            console.log("Redirecting...")
+            return res.redirect(existingUrl.url);
+        } else {
+            return res.status(404)
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
