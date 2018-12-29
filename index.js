@@ -30,12 +30,16 @@ app.get('/', (req, res) => {
 })
 
 app.post('/shorten', (req, res) => {
-    const hash = shortid.generate();
-    URL.create({
-        hash: hash,
-        url: req.body.url
+    URL.findOne({url: req.body.url}).exec()
+    .then(existingUrl => {
+       if (existingUrl) {
+            return existingUrl;
+       } else {
+            const hash = shortid.generate();
+            return URL.create({ hash: hash, url: req.body.url });
+       }
     }).then(doc => {
-        res.status(201).send(doc)
+        return res.status(201).send(doc)
     })
 })
 
