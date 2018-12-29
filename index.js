@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const shortid = require('shortid')
 
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true});
@@ -29,7 +30,13 @@ app.get('/', (req, res) => {
 })
 
 app.post('/shorten', (req, res) => {
-    
+    const hash = shortid.generate();
+    URL.create({
+        hash: hash,
+        url: req.body.url
+    }).then(doc => {
+        res.status(201).send(doc)
+    })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

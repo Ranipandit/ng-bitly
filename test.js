@@ -9,9 +9,9 @@ describe("API Tests", function() {
         const request = { url: "https://google.com" };
         axios.post('http://localhost:3000/shorten', request)
         .then(response => {
-            expect(response.status).to.be(201)
-            expect(response.body._id).to.be.ok
-            expect(response.body.hash).to.be.ok;
+            expect(response.status).to.equal(201)
+            expect(response.data._id).to.be.ok
+            expect(response.data.hash).to.be.ok;
             done();
         })
     });
