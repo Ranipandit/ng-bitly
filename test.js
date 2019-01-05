@@ -11,6 +11,7 @@ describe("API Tests", function() {
           .then(response => {
               id = response.data._id
               hash = response.data.hash
+              hits = response.data.hits
               expect(response.status).to.equal(201)
               expect(response.data._id).to.be.ok
               expect(response.data.hash).to.be.ok;
@@ -29,25 +30,25 @@ describe("API Tests", function() {
     });
   });
 
-  describe("/shorten/:hash", function() {
+  describe("/:hash", function() {
 
     it("should redirect the user for an existing hash", (done) => {
-      axios.get("http://localhost:5000/shorten/"+hash)
+      axios.get("http://localhost:5000/"+hash)
         .then(response => {
           expect(response.data).to.contain("google.com")
           done()
         })
-    })
-  })
+    });
 
-  describe("/:hash", function(){
-    it ("should count the hash",(done) => {
-      axios.post("http://localhost:5000/"+hash)
+    it ("should hits for the url incremented",(done) => {
+      const request = { url: "https://google.com" }
+      axios.post("http://localhost:5000/shorten",request)
       .then(response => {
-        expect(response.data.hits).to.be.ok
+        expect(response.data.hits).to.equal(hits+1)
         done()
       })
     })
   })
+
 
 });
