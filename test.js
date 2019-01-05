@@ -39,16 +39,31 @@ describe("API Tests", function() {
           done()
         })
     });
-
-    it ("should hits for the url incremented",(done) => {
+    it("should return the hits of the hash url",(done) => {
+      axios.get(`http://localhost:5000/hits?hash=${hash}`)
+        .then(response => {
+          expect(response.data.hits).to.equal(hits+1)
+          done()
+        })
+    });
+    it ("should increment the hits of the hash url",(done) => {
       const request = { url: "https://google.com" }
       axios.post("http://localhost:5000/shorten",request)
       .then(response => {
         expect(response.data.hits).to.equal(hits+1)
         done()
       })
+    });
+    it.only("should return error if hash is not exist",(done) => {
+      axios.get("http://localhost:5000/"+hash+"ghjgf")
+        .catch(err => {
+          expect(err.response.status).to.equal(404)
+          done()
+        })
     })
   })
+
+
 
 
 });

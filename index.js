@@ -46,10 +46,25 @@ app.post('/shorten', (req, res) => {
         })
 })
 
+app.get('/hits',(req, res) => {
+    console.log('***', req.query.hash);
+    URL.findOne({hash: req.query.hash}).exec()
+        .then(result => {
+            if(result) {
+                console.log(result)
+                return res.status(201).send({ hits: result.hits })
+            } else {
+                return res.status(404)
+            }
+        })
+
+})
+
 app.get('/:hash', (req, res) => {
-    console.log(req.params);
+    console.log('&&&', req.params);
     URL.findOne({hash: req.params.hash}).exec()
         .then(existingUrl => {
+            console.log(existingUrl)
             if (existingUrl) {
                 console.log("Redirecting...")
                 return URL.update({hash: req.params.hash},{$set:{hits: existingUrl.hits+1}}).exec()
@@ -58,9 +73,11 @@ app.get('/:hash', (req, res) => {
                                 return res.redirect(existingUrl.url);
                             })
             } else {
-                return res.status(404)
+                return res.sendStatus(404)
             }
         })
 })
+
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
