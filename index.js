@@ -80,7 +80,7 @@ app.get('/:hash', (req, res) => {
     URL.findOne({hash: req.params.hash}).exec()
         .then(existingUrl => {
             console.log(existingUrl)
-            if (existingUrl.hits<6) {
+            if (existingUrl) {
                 console.log("Redirecting...")
                 return URL.update({hash: req.params.hash},{$set:{hits: existingUrl.hits+1}}).exec()
                             .then(() => {
