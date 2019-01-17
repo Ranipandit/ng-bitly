@@ -77,7 +77,7 @@ app.get('/hits',(req, res) => {
 
 app.get('/:hash', (req, res) => {
     console.log('&&&', req.params);
-    URL.findOne({hash: req.params.hash,url:req.body.url,hits:req.body.hits}).exec()
+    URL.findOne({hash: req.params.hash}).exec()
         .then(existingUrl => {
             console.log(existingUrl)
             if (existingUrl.hits<6) {
@@ -85,13 +85,15 @@ app.get('/:hash', (req, res) => {
                 return URL.update({hash: req.params.hash},{$set:{hits: existingUrl.hits+1}}).exec()
                             .then(() => {
                                 console.log(existingUrl)
-
-                                return res.redirect(existingUrl.url);
+                                if (existingUrl.hits<6) {
+                                    return res.redirect(existingUrl.url)
+                                }
+                                else {
+                                    return res.status(404).send(shortid.generate()) 
+                                }
                             })
             } else {
-                const hash = shortid.generate();
-                const status = res.sendStatus(404)
-                return URL.create({ hash: hash, url: req.body.url,status:status});
+                return res.send(404)
             }
         })
 })
