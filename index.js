@@ -98,6 +98,7 @@ app.get("/:hash", (req, res) => {
 
             console.log(existingUrl);
             console.log(existingUrl.maxHits);
+            // limitations of using the hash url
             if (existingUrl.hits < existingUrl.maxHits) {
               return res.redirect(existingUrl.url);
             } else {
