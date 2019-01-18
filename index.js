@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
 // new than it will generate new hash url
 app.post("/shorten", (req, res) => {
   console.log(req.body);
-  URL.findOne({ url: req.body.url })
+  URL.findOne({ url: req.body.url,maxHits: req.body.maxHits})
     .exec()
     .then(existingUrl => {
       if (existingUrl) {
@@ -98,7 +98,7 @@ app.get("/:hash", (req, res) => {
 
             console.log(existingUrl);
             console.log(existingUrl.maxHits);
-            if (existingUrl.hits <= existingUrl.maxHits) {
+            if (existingUrl.hits < existingUrl.maxHits) {
               return res.redirect(existingUrl.url);
             } else {
               return res.sendStatus(404);
