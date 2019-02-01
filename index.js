@@ -46,11 +46,17 @@ app.post("/shorten", (req, res) => {
   URL.findOne({ url: req.body.url,maxHits: req.body.maxHits})
     .exec()
     .then(existingUrl => {
+      
       if (existingUrl) {
-        return existingUrl;
+        if(existingUrl.maxHits) {
+          const hash = shortid.generate();
+          return URL.create({ hash: hash, url: req.body.url, maxHits: req.body.maxHits });
+        } else {
+          return existingUrl
+        }
       } else {
-        const hash = shortid.generate();
-        return URL.create({ hash: hash, url: req.body.url, maxHits: req.body.maxHits });
+          const hash = shortid.generate();
+          return URL.create({ hash: hash, url: req.body.url });
       }
     })
     .then(doc => {
@@ -99,11 +105,15 @@ app.get("/:hash", (req, res) => {
             console.log(existingUrl);
             console.log(existingUrl.maxHits);
             // limitations of using the hash url
-            if (existingUrl.hits < existingUrl.maxHits) {
+            if (existingUrl.maxHits){
+              if (existingUrl.hits < existingUrl.maxHits) {
+                return res.redirect(existingUrl.url);
+              } else {
+                return res.sendStatus(404);
+              }
+            }else{
               return res.redirect(existingUrl.url);
-            } else {
-              return res.sendStatus(404);
-            }
+            } 
           });
       } else {
         return res.send(404);
